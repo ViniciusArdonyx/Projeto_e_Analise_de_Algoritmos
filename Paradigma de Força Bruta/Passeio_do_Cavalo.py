@@ -6,6 +6,7 @@
 # Nota:
 ## Utiliza o timeit para imprimir na tela o tempo gasto em verificar uma jogada valida, caso nao queira,
 ## basta comentar as variaveis inicio e fim e o print logo abaixo da variavel fim no procedimento "passeioBCT".
+## No procedimento "passeioBCT" foi utilizado no print o ", end="" ", que eh valido no python3.
 
 import timeit
 
