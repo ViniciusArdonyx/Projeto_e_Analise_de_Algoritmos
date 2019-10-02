@@ -33,7 +33,8 @@ def generateSubGenoma(subEntrada, adjacente, combinacoes):
 
     if(len(adjacente) > 0):
         while((opc[0] + opc[1]) == (adjacente[len(adjacente)-2] + adjacente[len(adjacente)-1]) or (opc[0] == adjacente[len(adjacente)-1])
-            or ((adjacente[len(adjacente)-3] + adjacente[len(adjacente)-2]) == (adjacente[len(adjacente)-1] + opc[0]))):     
+            or ((adjacente[len(adjacente)-3] + adjacente[len(adjacente)-2]) == (adjacente[len(adjacente)-1] + opc[0]))
+            or ((opc[0] + adjacente[len(adjacente)-1]) == (opc[1] + opc[2]))):     
             opc = random.choice(combinacoes)
     
     pedacoGenoma = ""
@@ -90,6 +91,10 @@ def main():
             print("\n\t*ERRO: A entrada deve ser entre 1 e 5000.")
             break
     
-    print("GENOMA: ", divideAndConquer(lentrada))
+    result = divideAndConquer(lentrada)
+
+    #print("\nGENOMAS:\n")
+    for i in range(0, len(result), 1):
+        print(result[i])
 
 main()
