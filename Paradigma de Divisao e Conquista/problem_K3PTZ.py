@@ -3,45 +3,52 @@
 # Autor: Vinicius Alves de Araujo - Mat.: 0011941
 # ------------------------------------------------ #
 #
-# Nota: Divisao e Conquista
+# Nota: 
+## Utiliza o random para sortear uma das combinacoes possiveis das bases de tamanho 3.
+## Utiliza o product para realizar as combinacoes e permutacoes de palavras de tamanho 3 usando as bases.
+## O paradigma escolhido, foi o de Divisao e Conquista, quebrando o problema de gerar um genoma de tamanho n
+## em um subgenoma de tamanho 3, quando n nao e divisivel por 3, realiza a operacao ate o maximo de divisoes
+## possiveis com o 3 e realiza mais um passo com o restante que sobrou da divisao.
 
 import random
+from itertools import product
 
-# Dicionario das bases
-bases = {1: 'X',
-         2: 'P',
-         3: 'E'}
+#Gera as possibilidades das 3 bases sem repetir um elemento consecutivo
+def triplePossibilities():
+    bases = ['X', 'P', 'E']
+    permutacoes = []
 
-#Para uma cadeia ser estável, ela não pode ter duas subsequências iguais adjacentes.
-def generateSubGenoma(subEntrada, adjacente):
-    pedacoGenoma = ""
-    
-    #Sorteia um dos elementos do dicionario
-    id, base = random.choice(list(bases.items()))
+    gerado = product(bases, repeat=3)
+
+    for sub in gerado:
+        if((sub[0] != sub[1]) and (sub[1] != sub[2])):
+            permutacoes.append(sub)
+
+    return permutacoes
+
+#Gera um subgenoma(otimo local) onde nao ocorra duas subsequencias iguais adjacentes
+def generateSubGenoma(subEntrada, adjacente, combinacoes):
+    #Sorteia uma das combinacoes
+    opc = random.choice(combinacoes)
 
     if(len(adjacente) > 0):
-            
-    else:
-        pedacoGenoma += base
+        while((opc[0] + opc[1]) == (adjacente[len(adjacente)-2] + adjacente[len(adjacente)-1]) or (opc[0] == adjacente[len(adjacente)-1])
+            or ((adjacente[len(adjacente)-3] + adjacente[len(adjacente)-2]) == (adjacente[len(adjacente)-1] + opc[0]))):     
+            opc = random.choice(combinacoes)
+    
+    pedacoGenoma = ""
 
-##############
-    while(len(pedacoGenoma) < subEntrada):
-        #Sorteia um dos elementos do dicionario
-        id, base = random.choice(list(bases.items()))
-
-        #Adiciona a base sorteada se a string estiver vazia ou for diferente da ultima base adicionada
-        if((len(pedacoGenoma) == 0) or (pedacoGenoma[len(pedacoGenoma)-1] != base)):
-            if((len(adjacente) > 0) and (len(pedacoGenoma) > 0)):
-                if((pedacoGenoma[len(pedacoGenoma)-1]+base) != (adjacente[len(adjacente)-2]+adjacente[len(adjacente)-1]) and 
-                    (adjacente[0] != base)):
-                    pedacoGenoma += base
-            else:
-                pedacoGenoma += base
+    #O pedaco do genoma sera do tamanho da subEntrada passada e nao da opc escolhida
+    for i in range(0, subEntrada, 1):
+        pedacoGenoma += opc[i]
 
     return pedacoGenoma
 
 def divideAndConquer(lentrada):
     lgenoma = []
+
+    #Gera as possibilidades de combinacoes das 3 bases
+    combinacoes = triplePossibilities()
 
     #Para cada valor de entrada na lista de entrada, faz-se:
     for e in range(0, len(lentrada), 1):
@@ -49,20 +56,18 @@ def divideAndConquer(lentrada):
         sobra = lentrada[e] % 3
         vezes = int((lentrada[e] - sobra) / 3)
 
-        #print("V: ",vezes," S: ",sobra)
-
         genoma = ""
         subGenoma = ""
         aux = subGenoma
 
         for i in range(0, vezes, 1):
-            subGenoma = generateSubGenoma(3, aux)
+            subGenoma = generateSubGenoma(3, aux, combinacoes)
             aux = subGenoma
             genoma += subGenoma
             
         #Se o numero inicialmente nao era divisivel por 3, executa mais uma vez passando o tamanho que falta para completar o valor informado
         if(sobra != 0):
-            subGenoma = generateSubGenoma(sobra, aux)
+            subGenoma = generateSubGenoma(sobra, aux, combinacoes)
             aux = subGenoma
             genoma += subGenoma
 
